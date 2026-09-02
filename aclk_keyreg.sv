@@ -1,8 +1,8 @@
 module aclk_keyreg (
-    input  logic clk,
-    input  logic reset,
-    input  logic [3:0] key,
-    input  logic shift,
+    input logic clk,
+    input logic reset,
+    input logic [3:0] key,
+    input logic shift,
     output logic [3:0] key_buffer_ms_hr,
     output logic [3:0] key_buffer_ls_hr,
     output logic [3:0] key_buffer_ms_min,
