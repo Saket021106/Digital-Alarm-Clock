@@ -1,10 +1,10 @@
 module aclk_controller (
-    input  logic clk,
-    input  logic reset,
-    input  logic one_second,
-    input  logic alarm_button,
-    input  logic time_button,
-    input  logic [3:0] key,          
+    input logic clk,
+    input logic reset,
+    input logic one_second,
+    input logic alarm_button,
+    input logic time_button,
+    input logic [3:0] key,          
     output logic reset_count,
     output logic load_new_c,
     output logic show_new_time,
@@ -23,11 +23,13 @@ module aclk_controller (
  
     assign timeout = (timeout_cnt >= 4'd10);
  
+    // ---- state register ----
     always_ff @(posedge clk or posedge reset) begin
         if (reset) state <= SHOW_TIME;
         else state <= next_state;
     end
  
+    // ---- 10-second key-entry timeout counter ----
     always_ff @(posedge clk or posedge reset) begin
         if (reset)
             timeout_cnt <= 4'd0;
@@ -39,6 +41,7 @@ module aclk_controller (
             timeout_cnt <= timeout_cnt + 4'd1;
     end
  
+    // ---- next-state logic ----
     always_comb begin
         next_state = state;
         case (state)
@@ -72,13 +75,14 @@ module aclk_controller (
             end
  
             SET_CURRENT_TIME: begin
-                next_state = SHOW_TIME;        
+                next_state = SHOW_TIME;           
             end
  
             default: next_state = SHOW_TIME;
         endcase
     end
  
+    // ---- Moore outputs (function of current state only) ----
     always_comb begin
         reset_count = (state == SET_CURRENT_TIME);
         load_new_c = (state == SET_CURRENT_TIME);
